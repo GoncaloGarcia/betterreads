@@ -6,13 +6,14 @@ class GoodreadsSession:
     """Handle OAuth sessions"""
 
     def __init__(
-        self, client_key, client_secret, access_token=None, access_token_secret=None
+        self, client_key, client_secret, access_token=None, access_token_secret=None, callback_uri=None
     ):
         self.client_key = client_key
         self.client_secret = client_secret
         self.access_token = access_token
         self.access_token_secret = access_token_secret
         self.is_authenticated = False
+        self.callback_uri = callback_uri
 
     def oauth_init(self):
         """Start outh and return authorization url."""
@@ -28,7 +29,10 @@ class GoodreadsSession:
         request_token, request_token_secret = service.get_request_token(
             header_auth=True
         )
-        auth_url = service.get_authorize_url(request_token)
+        auth_url = service.get_authorize_url(
+            request_token,
+            oauth_callback=self.callback_uri
+        )
         # Store service for finalizing
         self.request_token = request_token
         self.request_token_secret = request_token_secret
